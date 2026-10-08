@@ -1,4 +1,5 @@
 {
+  "name": "@base-ui/bundle-size",
   "private": true,
   "description": "Bundle size measurement workspace for MUI packages",
   "scripts": {

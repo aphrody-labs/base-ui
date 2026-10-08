@@ -1,4 +1,5 @@
 {
+  "name": "@base-ui/public-types",
   "private": true,
   "dependencies": {
     "@base-ui/react": "workspace:*",

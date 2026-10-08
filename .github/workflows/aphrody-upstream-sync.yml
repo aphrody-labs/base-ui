@@ -1,0 +1,43 @@
+name: Aphrody upstream sync
+
+# Merges mui/base-ui master into the fork's master and keeps it on Bun
+# (scripts/aphrody/sync-upstream.ts). A conflict beyond the Bun rewrite fails
+# the run and leaves master untouched.
+
+permissions:
+  contents: read
+
+on:
+  schedule:
+    - cron: "41 */6 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: aphrody-upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'aphrody-labs/base-ui'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      # GITHUB_TOKEN cannot push commits that touch .github/workflows, and
+      # upstream merges often do: a token with the `workflow` scope goes in
+      # the APHRODY_SYNC_TOKEN secret.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: master
+          fetch-depth: 0
+          token: ${{ secrets.APHRODY_SYNC_TOKEN || github.token }}
+      - name: Setup Bun
+        uses: ./.github/actions/setup-bun
+      - name: Merge upstream
+        run: |
+          git config user.name "aphrody-dev"
+          git config user.email "contact@aphrody.com"
+          git remote add upstream https://github.com/mui/base-ui.git
+          bun test scripts/aphrody/aphrody.test.ts
+          bun scripts/aphrody/sync-upstream.ts --push --no-index

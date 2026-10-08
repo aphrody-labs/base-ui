@@ -1,0 +1,56 @@
+name: Aphrody npm publish
+
+# Publishes @aphrody/base-ui and @aphrody/base-ui-utils with
+# scripts/aphrody/publish-npm.ts. Versions are `<upstream>-aphrody.<n>`; a
+# package whose content matches its newest published version is skipped, so
+# running after every sync is safe.
+
+permissions:
+  contents: read
+
+on:
+  workflow_run:
+    workflows: ["Aphrody upstream sync"]
+    types: [completed]
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: Build and pack without publishing
+        type: boolean
+        default: false
+      only:
+        description: Comma-separated package directories (utils,react; default all)
+        type: string
+        default: ""
+
+concurrency:
+  group: aphrody-publish-npm
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: >-
+      github.repository == 'aphrody-labs/base-ui' &&
+      (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: master
+          persist-credentials: false
+      - name: Setup Bun
+        uses: ./.github/actions/setup-bun
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Test publish script
+        run: bun test scripts/aphrody/aphrody.test.ts
+      - name: Publish
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          DRY_RUN: ${{ inputs.dry-run && '--dry-run' || '' }}
+          ONLY: ${{ inputs.only }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          bun scripts/aphrody/publish-npm.ts $DRY_RUN ${ONLY:+--only "$ONLY"} --out "$RUNNER_TEMP/aphrody-npm"

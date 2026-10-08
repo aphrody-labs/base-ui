@@ -2,17 +2,17 @@
   "name": "docs",
   "private": true,
   "scripts": {
-    "build": "rimraf ./export && cross-env NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192 next build --webpack && pnpm link-check",
-    "build:clean": "rimraf .next && pnpm build",
+    "build": "rimraf ./export && cross-env NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192 next build --webpack && bun run link-check",
+    "build:clean": "rimraf .next && bun run build",
     "dev": "next dev --port 3005",
     "deploy": "git fetch upstream master && git push -f upstream FETCH_HEAD:docs-v1",
     "serve": "serve ./export -l 3010",
     "docs-infra": "docs-infra",
-    "validate": "pnpm internal-validate --command \"pnpm validate\"",
+    "validate": "bun run internal-validate --command \"bun run validate\"",
     "internal-validate": "docs-infra validate",
     "typescript": "tsc -b tsconfig.json",
-    "link-check": "tsx ./scripts/reportBrokenLinks.mts",
-    "generate-llms": "node --experimental-strip-types ./scripts/generateLlmTxt/index.mjs"
+    "link-check": "bun ./scripts/reportBrokenLinks.mts",
+    "generate-llms": "bun ./scripts/generateLlmTxt/index.mjs"
   },
   "dependencies": {
     "@base-ui/react": "workspace:*",

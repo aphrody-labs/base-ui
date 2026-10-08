@@ -119,11 +119,11 @@
     }
   },
   "scripts": {
-    "prebuild": "rimraf --glob build build-tests build-typecheck published-docs \"*.tsbuildinfo\" && node ./scripts/stagePublishedDocs.mjs",
+    "prebuild": "rimraf --glob build build-tests build-typecheck published-docs \"*.tsbuildinfo\" && bun ./scripts/stagePublishedDocs.mjs",
     "build": "code-infra build --ignore \"**/*.template.js\" --copy .npmignore --copy \"published-docs/**:docs\" --tsgo",
-    "test:package": "publint --pack pnpm && attw --pack ./build --exclude-entrypoints package.json",
-    "release": "pnpm build && pnpm publish",
-    "test": "cross-env VITEST_ENV=jsdom vitest",
+    "test:package": "publint --pack bun && attw --pack ./build --exclude-entrypoints package.json",
+    "release": "bun run build && bun publish",
+    "test": "bun test",
     "types:check": "api-extractor run --config api-extractor.json",
     "typescript": "tsc -b tsconfig.json"
   },

@@ -1,4 +1,5 @@
 {
+  "name": "@base-ui/performance",
   "private": true,
   "description": "Performance benchmark workspace for Base UI",
   "scripts": {
