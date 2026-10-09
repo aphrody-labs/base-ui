@@ -261,6 +261,22 @@ export default defineConfig(
   },
   baseSpecRules,
   {
+    name: 'Aphrody Bun release scripts',
+    files: ['scripts/aphrody/**/*.ts'],
+    rules: {
+      'no-console': 'off',
+      'no-await-in-loop': 'off',
+      'import/extensions': ['error', 'ignorePackages', { ts: 'always' }],
+    },
+  },
+  {
+    name: 'Aphrody Bun script tests',
+    files: ['scripts/aphrody/**/*.test.ts'],
+    rules: {
+      'vitest/prefer-importing-vitest-globals': 'off',
+    },
+  },
+  {
     name: 'MUI ESLint config for docs',
     files: [`docs/**/*${EXTENSION_TS}`],
     extends: createDocsConfig(),
