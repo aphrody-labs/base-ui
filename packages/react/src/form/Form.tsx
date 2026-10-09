@@ -97,30 +97,6 @@ export const Form = React.forwardRef(function Form<
           });
         }
       },
-      getFormData() {
-        if (typeof FormData !== 'undefined' && elementRef.current) {
-          return new FormData(elementRef.current);
-        }
-        return null;
-      },
-      getStream() {
-        if (
-          typeof ReadableStream !== 'undefined' &&
-          typeof FormData !== 'undefined' &&
-          elementRef.current
-        ) {
-          const fd = new FormData(elementRef.current);
-          return new ReadableStream<[string, FormDataEntryValue]>({
-            start(controller) {
-              for (const entry of fd.entries()) {
-                controller.enqueue(entry);
-              }
-              controller.close();
-            },
-          });
-        }
-        return null;
-      },
     }),
     [],
   );
@@ -156,44 +132,7 @@ export const Form = React.forwardRef(function Form<
               }
             });
 
-            const formElement = elementRef.current ?? (event.currentTarget as HTMLFormElement);
-            const customProperties: FormSubmitCustomProperties = {
-              get formData(): FormData | null {
-                if (typeof FormData !== 'undefined' && formElement) {
-                  return new FormData(formElement);
-                }
-                return null;
-              },
-              get stream(): ReadableStream<[string, FormDataEntryValue]> | null {
-                if (
-                  typeof ReadableStream !== 'undefined' &&
-                  typeof FormData !== 'undefined' &&
-                  formElement
-                ) {
-                  const fd = new FormData(formElement);
-                  return new ReadableStream<[string, FormDataEntryValue]>({
-                    start(controller) {
-                      for (const entry of fd.entries()) {
-                        controller.enqueue(entry);
-                      }
-                      controller.close();
-                    },
-                  });
-                }
-                return null;
-              },
-              getFormData() {
-                return this.formData;
-              },
-              getStream() {
-                return this.stream;
-              },
-            };
-
-            onFormSubmit(
-              formValues,
-              createGenericEventDetails(REASONS.none, event.nativeEvent, customProperties),
-            );
+            onFormSubmit(formValues, createGenericEventDetails(REASONS.none, event.nativeEvent));
           }
         },
       },
@@ -236,43 +175,13 @@ export const Form = React.forwardRef(function Form<
   ): React.JSX.Element;
 };
 
-export interface FormSubmitCustomProperties {
-  /**
-   * Native `FormData` constructed from the form element without polyfill overhead.
-   */
-  readonly formData: FormData | null;
-  /**
-   * Native `ReadableStream` streaming the form's entries without polyfill overhead.
-   */
-  readonly stream: ReadableStream<[string, FormDataEntryValue]> | null;
-  /**
-   * Returns native `FormData` for the form element.
-   */
-  getFormData: () => FormData | null;
-  /**
-   * Returns a native `ReadableStream` streaming the form's entries.
-   */
-  getStream: () => ReadableStream<[string, FormDataEntryValue]> | null;
-}
-
 export type FormSubmitEventReason = typeof REASONS.none;
-export type FormSubmitEventDetails = BaseUIGenericEventDetails<
-  Form.SubmitEventReason,
-  FormSubmitCustomProperties
->;
+export type FormSubmitEventDetails = BaseUIGenericEventDetails<Form.SubmitEventReason>;
 
 export type FormValidationMode = 'onSubmit' | 'onBlur' | 'onChange';
 
 export interface FormActions {
   validate: (fieldName?: string | undefined) => void;
-  /**
-   * Returns native `FormData` for the form element.
-   */
-  getFormData?: () => FormData | null;
-  /**
-   * Returns a native `ReadableStream` streaming the form's entries.
-   */
-  getStream?: () => ReadableStream<[string, FormDataEntryValue]> | null;
 }
 
 export interface FormState {}
@@ -326,7 +235,6 @@ export namespace Form {
   export type ValidationMode = FormValidationMode;
   export type SubmitEventReason = FormSubmitEventReason;
   export type SubmitEventDetails = FormSubmitEventDetails;
-  export type SubmitCustomProperties = FormSubmitCustomProperties;
 
   export type Values<FormValues extends Record<string, any> = Record<string, any>> = FormValues;
 }

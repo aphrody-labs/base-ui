@@ -16,6 +16,9 @@
     "sharp",
     "unrs-resolver"
   ],
+  "patchedDependencies": {
+    "@mui/internal-code-infra@0.1.1-canary.6": "patches/@mui%2Finternal-code-infra@0.1.1-canary.6.patch"
+  },
   "overrides": {
     "form-data": "^4.0.6",
     "fast-uri": "^4.2.1",
@@ -30,8 +33,8 @@
   },
   "scripts": {
     "deduplicate": "bun install",
-    "build": "bun ./scripts/aphrody/fast-build.ts",
-    "build:legacy": "lerna run --no-private build",
+    "build": "lerna run --no-private build",
+    "build:fast": "bun ./scripts/aphrody/fast-build.ts",
     "release:version": "lerna version --no-changelog --no-push --no-git-tag-version --no-private",
     "release:build": "bun run docs:generate-llms && cross-env BASE_UI_PUBLISH_DOCS=1 lerna run --concurrency 8 --no-private build --skip-nx-cache --",
     "release:changelog": "code-infra generate-changelog",

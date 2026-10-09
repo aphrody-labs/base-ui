@@ -1,0 +1,27 @@
+diff --git a/src/utils/typescript.mjs b/src/utils/typescript.mjs
+index 24dd39b835d55bdabff07e864f1b969a47a4bf1f..33b9ceb8003267f0c46279564612b2cd81e5eb61 100644
+--- a/src/utils/typescript.mjs
++++ b/src/utils/typescript.mjs
+@@ -22,11 +22,17 @@ const $$ = $({ stdio: 'inherit' });
+  */
+ async function findBin(dir, name) {
+   const binPath = path.join(dir, 'node_modules', '.bin', name);
+-  const exists = await fs.stat(binPath).then(
+-    (stat) => stat.isFile(),
+-    () => false,
+-  );
+-  return exists ? binPath : null;
++  for (const ext of ['', '.exe', '.cmd', '.bunx']) {
++    const candidate = binPath + ext;
++    const exists = await fs.stat(candidate).then(
++      (stat) => stat.isFile(),
++      () => false,
++    );
++    if (exists) {
++      return candidate;
++    }
++  }
++  return null;
+ }
+ 
+ /**

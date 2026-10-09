@@ -1,6 +1,6 @@
 # Plan (aphrody-labs/base-ui)
 
-Master plan: `C:/bun/PLAN.md` section R. Status of this fork:
+Master plan: `PLAN-FRAMEWORK.md` of [aphrody-labs/bun](https://github.com/aphrody-labs/bun), section R. Status of this fork:
 
 - ✅ Fork synced on `mui/base-ui` master, remotes origin = fork, upstream = mui.
 - ✅ Bun tooling: bunify, sync (6 h), npm publish, setup-bun action, secrets `NPM_TOKEN` / `APHRODY_SYNC_TOKEN`.

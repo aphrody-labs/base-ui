@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
 import { apply, rewrite, rewriteScript } from "./bunify.ts";
+import { resolveRelativeImport, transformDtsImports } from "./fast-build.ts";
 import { contentHash, nextVersion, PACKAGES, publishManifest } from "./publish-npm.ts";
 import { touchesLockInputs } from "./sync-upstream.ts";
 
@@ -116,4 +117,31 @@ test("sync refreshes bun.lock only when its inputs change", () => {
   expect(touchesLockInputs(["pnpm-lock.yaml"])).toBe(true);
   expect(touchesLockInputs(["docs/package.json"])).toBe(true);
   expect(touchesLockInputs(["pnpm-workspace.yaml"])).toBe(true);
+});
+
+describe("fast-build", () => {
+  const src = join(ROOT, "packages", "react", "src");
+
+  test("resolves relative imports to files and directory indexes", () => {
+    expect(resolveRelativeImport("./root/AccordionRoot", join(src, "accordion"), ".mjs")).toBe(
+      "./root/AccordionRoot.mjs",
+    );
+    expect(resolveRelativeImport("../accordion", join(src, "button"), ".js")).toBe("../accordion/index.js");
+    expect(resolveRelativeImport("react", src, ".mjs")).toBe("react");
+  });
+
+  test("rewrites relative specifiers in declarations only", () => {
+    const dts = [
+      'export * from "./root/AccordionRoot";',
+      'import type { X } from "react";',
+      'type Y = import("./root/AccordionRoot").Z;',
+    ].join("\n");
+    expect(transformDtsImports(dts, join(src, "accordion", "index.d.ts"), ".mjs")).toBe(
+      [
+        'export * from "./root/AccordionRoot.mjs";',
+        'import type { X } from "react";',
+        'type Y = import("./root/AccordionRoot.mjs").Z;',
+      ].join("\n"),
+    );
+  });
 });

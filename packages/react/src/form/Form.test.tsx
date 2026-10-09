@@ -1173,41 +1173,4 @@ describe('<Form />', () => {
       expect(replacementValidate).toHaveBeenCalledTimes(1);
     });
   });
-
-  describe('native FormData and ReadableStream handling', () => {
-    it('provides native FormData and ReadableStream in onFormSubmit eventDetails', async () => {
-      let receivedDetails: Form.SubmitEventDetails | null = null;
-      const { user } = await render(
-        <Form
-          onFormSubmit={(_values, details) => {
-            receivedDetails = details;
-          }}
-        >
-          <Field.Root name="username">
-            <Field.Control defaultValue="alice" />
-          </Field.Root>
-          <button type="submit">Submit</button>
-        </Form>,
-      );
-
-      await user.click(screen.getByRole('button', { name: 'Submit' }));
-
-      expect(receivedDetails).not.toBeNull();
-      const formData = (receivedDetails as any).formData;
-      expect(formData).toBeInstanceOf(FormData);
-      expect(formData.get('username')).toBe('alice');
-
-      const stream = (receivedDetails as any).stream;
-      expect(stream).toBeInstanceOf(ReadableStream);
-
-      const reader = stream.getReader();
-      const entries: [string, any][] = [];
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        entries.push(value);
-      }
-      expect(entries).toEqual([['username', 'alice']]);
-    });
-  });
 });
