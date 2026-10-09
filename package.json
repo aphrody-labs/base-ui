@@ -98,6 +98,7 @@
     "@guidepup/guidepup": "0.34.0",
     "@guidepup/playwright": "0.19.1",
     "@guidepup/setup": "0.29.1",
+    "@happy-dom/global-registrator": "20.14.6",
     "@microsoft/api-extractor": "7.59.3",
     "@mui/internal-code-infra": "0.1.1-canary.6",
     "@mui/internal-netlify-cache": "0.1.1-canary.1",

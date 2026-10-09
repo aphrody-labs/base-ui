@@ -1,0 +1,17 @@
+# Fork-only (aphrody-labs/base-ui): unit tests run with `bun test` on happy-dom.
+# Upstream runs the same files with Vitest (jsdom or Playwright browsers); the
+# browser modes stay on Vitest (`bun run test:chromium`).
+[test]
+preload = ["./test/setupBunTest.ts"]
+pathIgnorePatterns = [
+  "**/node_modules/**",
+  "**/build/**",
+  "examples/**",
+  "docs/**",
+  "playground/**",
+  "test/e2e/**",
+  "test/regressions/**",
+  "test/performance/**",
+  "test/screen-reader/**",
+  "**/*.spec.*",
+]
