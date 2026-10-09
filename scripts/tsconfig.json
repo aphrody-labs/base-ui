@@ -6,5 +6,5 @@
     "moduleResolution": "bundler"
   },
   "include": ["**/*.ts", "**/*.mts", "**/*.mjs", "../package.json", "../*.mjs", "../*.mts"],
-  "exclude": ["**/node_modules"]
+  "exclude": ["**/node_modules", "aphrody/**/*"]
 }

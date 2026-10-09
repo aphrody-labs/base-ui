@@ -30,7 +30,8 @@
   },
   "scripts": {
     "deduplicate": "bun install",
-    "build": "lerna run --no-private build",
+    "build": "bun ./scripts/aphrody/fast-build.ts",
+    "build:legacy": "lerna run --no-private build",
     "release:version": "lerna version --no-changelog --no-push --no-git-tag-version --no-private",
     "release:build": "bun run docs:generate-llms && cross-env BASE_UI_PUBLISH_DOCS=1 lerna run --concurrency 8 --no-private build --skip-nx-cache --",
     "release:changelog": "code-infra generate-changelog",

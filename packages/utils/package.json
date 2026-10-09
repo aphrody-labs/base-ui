@@ -21,7 +21,8 @@
   },
   "scripts": {
     "prebuild": "rimraf --glob build build-tests \"*.tsbuildinfo\"",
-    "build": "code-infra build --copy .npmignore --tsgo",
+    "build": "bun ../../scripts/aphrody/fast-build.ts",
+    "build:legacy": "code-infra build --copy .npmignore --tsgo",
     "test:package": "publint --pack bun ./build && attw --pack ./build --exclude-entrypoints package.json",
     "release": "bun run build && bun publish",
     "test": "bun test",
